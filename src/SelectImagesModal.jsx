@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
+import { memo } from "react";
 
-export default function SelectedImagesModal({
+function SelectedImagesModal({
   selectedImages,
   setSelectedImages,
   setImages,
@@ -16,10 +17,10 @@ export default function SelectedImagesModal({
 
   return createPortal(
     <div
-      className={`w-full sm:w-fit fixed bottom-0 sm:bottom-4 sm:left-4 overflow-hidden border-black ${Object.keys(selectedImages).length > 0 ? "sm:rounded-xl shadow-lg shadow-black/30 z-50" : "-z-10 shadow-none"} duration-[200ms] ease-in-out transform-gpu`}
+      className={`w-full sm:w-fit fixed bottom-0 sm:bottom-4 sm:left-4 overflow-hidden border-black ${Object.keys(selectedImages).length > 0 ? "sm:rounded-xl shadow-md shadow-black/30 z-50" : "-z-10 shadow-none"} duration-[200ms] ease-in-out transform-gpu`}
     >
       <div
-        className={`text-sm h-full ${Object.keys(selectedImages).length > 0 ? "translate-y-0 z-50" : "translate-y-full -z-50"} px-5 py-5 gap-4 border flex flex-col bg-white sm:rounded-xl shadow-xl transition-all duration-[200ms] ease-in-out transform-gpu`}
+        className={`text-sm h-full ${Object.keys(selectedImages).length > 0 ? "translate-y-0 z-50 opacity-100" : "translate-y-full -z-50 opacity-0"} px-5 py-5 gap-4 border flex flex-col bg-white sm:rounded-xl shadow-xl transition-all duration-[200ms] ease-in-out transform-gpu`}
       >
         <p className="text-black">
           Are you sure you want to remove{" "}
@@ -58,3 +59,5 @@ export default function SelectedImagesModal({
     document.getElementById("modal"),
   );
 }
+
+export default memo(SelectedImagesModal);

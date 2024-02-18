@@ -1,25 +1,120 @@
 import { createPortal } from "react-dom";
-import { Slider } from "./components/ui/slider";
-import { useEffect, useState } from "react";
+import { memo, useState } from "react";
+import UploadingModal from "@/UploadingModal";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function CompressionModal({ selectedImages }) {
+function imageSize(size) {
+  return size / 1000;
+}
+
+function CompressionModal({ images, selectedImages }) {
+  const navigate = useNavigate();
+  const [progress, setProgress] = useState(0);
+  const [upload, setUpload] = useState(false);
+  const [target, setTarget] = useState(
+    imageSize(images[images.length - 1]?.size),
+  );
+
+  async function sendImages() {
+    const url = "http://localhost:4000/api/upload-images";
+
+    const formData = new FormData();
+    for (let i = 0; i < images.length; ++i) {
+      formData.append(`images`, images[i]);
+    }
+
+    formData.append("targetSize", target);
+
+    const axiosConfig = {
+      onUploadProgress(progressEvent) {
+        setProgress(
+          Math.trunc((progressEvent.loaded * 100) / progressEvent.total),
+        );
+      },
+    };
+
+    try {
+      const data = await axios.post(url, formData, axiosConfig);
+      sessionStorage.setItem("user_id", data.data.message);
+      setUpload(false);
+      setTimeout(() => navigate("/download"), 400);
+    } catch (err) {
+      console.log(err);
+      setUpload(false);
+    }
+
+    // fetch(url, {
+    //   method: "POST",
+    //   body: formData,
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     setUpload(false);
+    //     sessionStorage.setItem("user_id", data.message);
+    //     console.log(data);
+    //   })
+    //   .catch((err) => {
+    //     setUpload(false);
+    //     console.log(err);
+    //   });
+  }
+
+  async function handleImageUpload() {
+    setUpload(true);
+    await sendImages();
+  }
+
   return createPortal(
-    <div
-      className={`fixed bottom-0 sm:bottom-4 sm:right-4 border-black ${Object.keys(selectedImages).length === 0 ? "sm:rounded-xl shadow-lg shadow-black/30 z-50" : " -z-10 shadow-none"} duration-[200ms] ease-in-out transform-gpu`}
-    >
+    <>
       <div
-        className={`w-full sm:w-80 ${Object.keys(selectedImages).length === 0 ? "translate-y-0 z-50" : "translate-y-full -z-50"} px-5 py-5 gap-4 border flex flex-col bg-white sm:rounded-xl shadow-xl transition-all duration-[200ms] ease-in-out transform-gpu`}
+        className={`w-full sm:w-fit fixed bottom-0 sm:bottom-4 sm:right-4 border-black ${Object.keys(selectedImages).length === 0 ? "sm:rounded-xl shadow-md shadow-black/30 z-30" : " -z-10 shadow-none"} duration-[200ms] ease-in-out transform-gpu`}
       >
-        <div className={`flex gap-2 items-center`}>
-          <input type="number" className={`w-full border outline-none`} />
+        <div className={`-z-50 overflow-hidden`}>
+          <UploadingModal
+            progress={progress}
+            uploading={upload}
+            setUploading={() => setUpload(!upload)}
+          />
         </div>
-        <button
-          className={`py-2 w-full bg-blue-500 rounded text-white text-base`}
+        <div
+          className={`w-full sm:w-96 justify-between ${Object.keys(selectedImages).length === 0 ? "z-20 opacity-100 translate-y-0" : "-z-20 opacity-0 translate-y-full"} px-5 py-5 gap-4 border flex flex-col bg-white sm:rounded-xl shadow duration-[200ms] transform-gpu`}
         >
-          Shrink
-        </button>
+          <p className={`flex items-center justify-center text-gray-700`}>
+            Set your target size for the images
+          </p>
+          <div className={`flex flex-col gap-4`}>
+            <div className={`flex gap-2 items-center`}>
+              <input
+                min={imageSize(images[0]?.size) / 2}
+                max={imageSize(images[images.length - 1]?.size)}
+                value={target}
+                onChange={(e) => setTarget(Number(e.target.value))}
+                type="number"
+                className={`border w-4/12 rounded-md py-1 px-2 outline-none`}
+              />
+              KB
+              <input
+                min={imageSize(images[0]?.size) / 2}
+                max={imageSize(images[images.length - 1]?.size)}
+                value={target}
+                onChange={(e) => setTarget(Number(e.target.value))}
+                type="range"
+                className={`flex-1 outline-none`}
+              />
+            </div>
+            <button
+              onClick={handleImageUpload}
+              className={`py-2 w-full bg-blue-500 outline-none hover:bg-blue-600 active:bg-blue-700 active:scale-95 transition-all duration-200 shadow hover:shadow-md rounded-md text-white`}
+            >
+              Shrink Images
+            </button>
+          </div>
+        </div>
       </div>
-    </div>,
+    </>,
     document.getElementById("modal"),
   );
 }
+
+export default memo(CompressionModal);

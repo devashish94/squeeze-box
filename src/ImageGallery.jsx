@@ -1,16 +1,16 @@
 import ImageHolder from "./ImageHolder.jsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import SelectedImagesModal from "./SelectImagesModal.jsx";
 import CompressionModal from "./CompressModal.jsx";
 
-export default function ImageGallery({ images, setImages }) {
+function ImageGallery({ images, setImages }) {
   const [selectedImages, setSelectedImages] = useState({});
   const navigate = useNavigate();
 
   useEffect(
     function () {
-      console.log("images", images);
+      // console.log("images", images);
       if (images.length === 0) {
         navigate("/");
       }
@@ -38,11 +38,8 @@ export default function ImageGallery({ images, setImages }) {
         selectedImages={selectedImages}
         setSelectedImages={setSelectedImages}
       />
-      <CompressionModal selectedImages={selectedImages} />
-      <div className="w-screen h-screen flex flex-col items-center overflow-auto gap-5 p-3 sm:p-10">
-        <p className="font-bold text-3xl flex items-center">
-          Preview your images
-        </p>
+      <CompressionModal images={images} selectedImages={selectedImages} />
+      <div className="w-full flex-1 pb-48 flex flex-col items-center overflow-auto gap-5 p-3 sm:p-10">
         <div className="w-full gap-2 sm:gap-3 max-w-screen-xl grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
           {images && images.length > 0
             ? images.map(function (image, index) {
@@ -96,3 +93,5 @@ export default function ImageGallery({ images, setImages }) {
     </>
   );
 }
+
+export default memo(ImageGallery);

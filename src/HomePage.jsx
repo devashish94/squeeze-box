@@ -13,11 +13,11 @@ export default function HomePage({ setImages, images }) {
   };
 
   function handleImageUpload(e) {
-    setImages(
-      Array.from(e.target.files).filter(
-        (file) => supportedImageTypes[file.type],
-      ),
+    const arr = Array.from(e.target.files).filter(
+      (file) => supportedImageTypes[file.type],
     );
+    arr.sort((a, b) => a.size - b.size);
+    setImages(arr);
   }
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function HomePage({ setImages, images }) {
   }, [images]);
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center">
+    <div className="h-screen w-screen flex flex-col items-center justify-center font-sans">
       <div className="flex flex-col items-center gap-3">
         <p className="font-bold text-5xl">
           Squeezebox: The Effortless Image Shrinkage Tool
@@ -41,12 +41,13 @@ export default function HomePage({ setImages, images }) {
           onChange={handleImageUpload}
           id="images-select"
           type="file"
+          name="images"
           className={`hidden`}
           multiple={true}
         />
         <button
           onClick={() => inputRef.current?.click()}
-          className={`px-4 py-3 rounded-md bg-blue-500 text-white font-bold`}
+          className={`px-4 py-3 rounded-md bg-blue-500 text-white font-semibold`}
         >
           Browse Images
         </button>
