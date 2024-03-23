@@ -4,7 +4,7 @@ export default function DownloadPage() {
   async function downloadImages() {
     const clientID = sessionStorage.getItem("user_id");
     const response = await axios.post(
-      "http://localhost:4000/api/download",
+      `${import.meta.env.VITE_API}/api/download`,
       {
         clientID,
       },
@@ -22,7 +22,7 @@ export default function DownloadPage() {
   return (
     <div className={`w-screen h-screen flex flex-col`}>
       <div
-        className={`shadow px-7 text-lg py-3 border-b flex items-center text-gray-800`}
+        className={`shadow px-5 text-lg py-3 border-b flex items-center text-gray-800`}
       >
         <p>Download Page</p>
       </div>

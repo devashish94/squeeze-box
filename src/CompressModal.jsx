@@ -17,7 +17,9 @@ function CompressionModal({ images, selectedImages }) {
   );
 
   async function sendImages() {
-    const url = "http://localhost:4000/api/upload-images";
+    // const url = "http://localhost:4000/api/upload-images";
+    const url = `${import.meta.env.VITE_API}/api/upload-images` 
+    // const url = "http://localhost/api/upload-images";
 
     const formData = new FormData();
     for (let i = 0; i < images.length; ++i) {
