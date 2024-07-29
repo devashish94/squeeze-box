@@ -12,13 +12,11 @@ function CompressionModal({ images, selectedImages }) {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [upload, setUpload] = useState(false);
-  const [target, setTarget] = useState(
-    imageSize(images[images.length - 1]?.size),
-  );
+  const [target, setTarget] = useState(imageSize(images[images.length - 1]?.size));
 
   async function sendImages() {
     // const url = "http://localhost:4000/api/upload-images";
-    const url = `${import.meta.env.VITE_API}/api/upload-images` 
+    const url = `${import.meta.env.VITE_API}/api/upload-images`
     // const url = "http://localhost/api/upload-images";
 
     const formData = new FormData();
@@ -46,20 +44,6 @@ function CompressionModal({ images, selectedImages }) {
       setUpload(false);
     }
 
-    // fetch(url, {
-    //   method: "POST",
-    //   body: formData,
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setUpload(false);
-    //     sessionStorage.setItem("user_id", data.message);
-    //     console.log(data);
-    //   })
-    //   .catch((err) => {
-    //     setUpload(false);
-    //     console.log(err);
-    //   });
   }
 
   async function handleImageUpload() {
