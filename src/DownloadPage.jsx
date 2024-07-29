@@ -1,21 +1,15 @@
 import axios from "axios";
+import { useEffect } from "react";
 
 export default function DownloadPage() {
   async function downloadImages() {
     const clientID = sessionStorage.getItem("user_id");
-    const response = await axios.post(
-      `${import.meta.env.VITE_API}/api/download`,
-      {
-        clientID,
-      },
-      { responseType: "arraybuffer" },
-    );
+    const response = await axios.get(`${import.meta.env.VITE_API}/api/image/download/${clientID}`, { responseType: "arraybuffer" });
 
     const blob = new Blob([response.data], { type: "application/zip" });
-
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
-    link.download = "shrunk_images.zip";
+    link.download = "shrunk-images.zip";
     link.click();
   }
 

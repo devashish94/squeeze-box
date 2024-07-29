@@ -15,9 +15,7 @@ function CompressionModal({ images, selectedImages }) {
   const [target, setTarget] = useState(imageSize(images[images.length - 1]?.size));
 
   async function sendImages() {
-    // const url = "http://localhost:4000/api/upload-images";
-    const url = `${import.meta.env.VITE_API}/api/upload-images`
-    // const url = "http://localhost/api/upload-images";
+    const url = `${import.meta.env.VITE_API}/api/image/upload`
 
     const formData = new FormData();
     for (let i = 0; i < images.length; ++i) {
@@ -35,8 +33,9 @@ function CompressionModal({ images, selectedImages }) {
     };
 
     try {
-      const data = await axios.post(url, formData, axiosConfig);
-      sessionStorage.setItem("user_id", data.data.message);
+      const { data: { data } } = await axios.post(url, formData, axiosConfig);
+      console.log(data.clientId, data)
+      sessionStorage.setItem("user_id", data.clientId);
       setUpload(false);
       setTimeout(() => navigate("/download"), 400);
     } catch (err) {
